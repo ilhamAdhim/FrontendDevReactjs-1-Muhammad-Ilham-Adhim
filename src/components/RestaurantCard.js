@@ -1,14 +1,24 @@
 import React from 'react';
-import { Card, Col, Button, Row, Typography, Divider, Rate, } from 'antd';
+import { Card, Col, Button, Row, Typography, Divider, Rate, Image, } from 'antd';
 import { ClockCircleFilled } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 
-const RestaurantCard = (props) => {
+const RestaurantCard = ({
+    _id,
+    restaurantName = "Hello World Resto",
+    imageSrc = "https://picsum.photos/id/598/750/400",
+    cuisine = [{
+        name: 'Thai'
+    }],
+    price_level = "$$$",
+    is_closed = true
+}) => {
+
     return (
-        <Card hoverable>
-            <img alt={props.image} src={props.image} width="100%" height={250} />
+        <Card hoverable style={{ cursor: 'default' }}>
+            <Image src={imageSrc} width="100%" alt="alt" />
             <Row justify="space-between" style={{ fontWeight: "bold" }}>
-                <Col> {props.product_name} </Col>
-                <Button type="primary" style={{ fontWeight: "bold" }} >{props.category.name}</Button>
+                <Col> {restaurantName} </Col>
             </Row>
             <Row style={{ marginTop: "1em" }}>
                 <Rate disabled defaultValue={"5.0"} />
@@ -16,25 +26,25 @@ const RestaurantCard = (props) => {
             <Row style={{ marginTop: "1em", lineHeight: '2em' }} justify="space-between">
                 <Col>
                     <Typography.Text type="secondary">
-                        {props.location}
-                        {/* {`${props.type} • ${props.price_level}` } */}
+                        {`${cuisine[0].name} • ${price_level}`}
                     </Typography.Text>
                 </Col>
                 <Col>
-                    <ClockCircleFilled style={{ color: 'red', marginRight: '.7em' }} />
+                    <ClockCircleFilled style={{ color: is_closed ? 'red' : 'green', marginRight: '.7em' }} />
                     <Typography.Text style={{ color: 'grey', lineHeight: '2em' }}>
-                        OPEN NOW
-                        {/* props.is_closed ? 'OPEN NOW ' : 'CLOSED' */}
+                        {is_closed ? 'CLOSED' : 'OPEN NOW'}
                     </Typography.Text>
                 </Col>
             </Row>
             <Divider />
             <Row>
                 <Col span={24}>
-                    <Button
-                        style={{ width: '100%', letterSpacing: '.15em', backgroundColor: '#285194', color: 'white' }}>
-                        LEARN MORE
-                    </Button>
+                    <Link to={`/detail/${_id}`} >
+                        <Button
+                            style={{ width: '100%', letterSpacing: '.15em', backgroundColor: '#285194', color: 'white' }}>
+                            LEARN MORE
+                        </Button>
+                    </Link>
                 </Col>
             </Row>
         </Card>

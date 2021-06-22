@@ -1,56 +1,74 @@
 import { Button, List, Row, Skeleton } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, BrowserRouter as Router } from 'react-router-dom';
 import RestaurantCard from './RestaurantCard';
 
 const RestaurantList = props => {
     const [filteredProductList, setFilteredProductList] = useState([{
         _id: 0,
-        product_name: 'Penggaris',
-        price: 2700,
-        category: 'Bagus',
-        location: 'Malang',
+        restaurantName: 'Penggaris',
+        is_closed: false,
+        cuisine: [{
+            name: 'Thai'
+        }],
+        price_level: '$',
     },
     {
         _id: 1,
-        product_name: 'Penggaris Haha',
-        price: 2700,
-        category: 'Bagus',
-        location: 'Malang',
+        restaurantName: 'Penggaris Haha',
+        is_closed: false,
+        cuisine: [{
+            name: 'French'
+        }],
+        price_level: '$$',
     },
     {
         _id: 2,
-        product_name: 'Penggaris Haha',
-        price: 2700,
-        category: 'Bagus',
-        location: 'Malang',
+        restaurantName: 'Penggaris Haha',
+        imageSrc: 'https://picsum.photos/id/1060/600/310',
+        is_closed: true,
+        cuisine: [{
+            name: 'Thai'
+        }],
+        price_level: '$',
     },
     {
         _id: 3,
-        product_name: 'Penggaris Haha',
-        price: 2700,
-        category: 'Bagus',
-        location: 'Malang',
+        restaurantName: 'Penggaris Haha',
+        imageSrc: 'https://picsum.photos/id/30/600/310',
+        is_closed: true,
+        cuisine: [{
+            name: 'Seafood'
+        }],
+        price_level: '$$$$',
     },
     {
         _id: 4,
-        product_name: 'Penggaris Haha',
-        price: 2700,
-        category: 'Bagus',
-        location: 'Malang',
+        restaurantName: 'Penggaris Haha',
+        imageSrc: 'https://picsum.photos/id/431/600/310',
+        is_closed: false,
+        cuisine: [{
+            name: 'Japanese'
+        }],
+        price_level: '$',
     },
     ]);
 
     //? State to store & manipulate Data
-    const [fetchedDataRestaurant, setFetchedDataRestaurant] = useState([]);
+    const [fetchedDataRestaurant, setFetchedDataRestaurant] = useState(props.data);
     const [displayedData, setDisplayedData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
 
-    //? 
+    // ? 
     const [isFiltering, setIsFiltering] = useState(false);
     const [canLoadMore, setCanLoadMore] = useState(false);
     const [isDataLoaded, setIsDataLoaded] = useState(true);
     const [isLoadingMoreData, setIsLoadingMoreData] = useState(false);
+
+    useEffect(() => {
+        setDisplayedData(fetchedDataRestaurant.slice(0, 10))
+
+    }, []);
 
     const loadMore = () => {
         // TODO : Change fetchedDataRestaurant -> props.data later on
@@ -58,10 +76,10 @@ const RestaurantList = props => {
         setIsLoadingMoreData(true)
         // setDisplayedData(() => [...displayedData, fetchedDataRestaurant.slice(displayedData.length, 10)])
         setFilteredProductList(() => [...filteredProductList, {
-            product_name: 'Penggaris Haha',
+            restaurantName: 'Penggaris Haha',
             price: 2700,
-            category: 'Bagus',
-            location: 'Malang',
+            is_closed: true,
+            price_level: '$',
         },])
         setIsLoadingMoreData(false)
         // }
@@ -82,18 +100,7 @@ const RestaurantList = props => {
                 dataSource={filteredProductList}
                 renderItem={(item) => (
                     <List.Item>
-                        <Link to={`/detail/${item._id}`} _id={item._id}>
-                            {isDataLoaded ?
-                                <RestaurantCard image={item.image}
-                                    _id={item._id}
-                                    _id={item._id}
-                                    price={item.price}
-                                    category={item.category}
-                                    product_name={item.product_name}
-                                    location={"Malang, Jawa Timur"}
-                                /> : <Skeleton avatar active />}
-
-                        </Link>
+                        <RestaurantCard {...item} />
                     </List.Item>
                 )}
             />
