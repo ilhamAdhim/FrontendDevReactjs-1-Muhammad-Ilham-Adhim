@@ -1,0 +1,13 @@
+name: Integration workflow
+on: [push]
+jobs:
+  unit-test:
+    name: Unit test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@master
+      - name: Install depedency
+        run: npm install
+      - name: Run unit test
+        run: npm run test

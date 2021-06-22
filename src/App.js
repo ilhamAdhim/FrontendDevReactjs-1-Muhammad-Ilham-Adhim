@@ -1,24 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+
+import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+
+import NotFound from "./components/NotFound";
+import DetailPage from "./pages/DetailPage";
+import LoginPage from "./pages/LoginPage";
+import MainPage from "./pages/MainPage";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        {/* A <Switch> looks through its children <Route>s and
+            renders the first one that matches the current URL. */}
+        <Switch>
+          <Route exact path="/">
+            <MainPage />
+          </Route>
+          <Route path="/detail/:idProduct">
+            <DetailPage />
+          </Route>
+          <Route path="/Login">
+            <LoginPage />
+          </Route>
+          <Route component={NotFound} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
