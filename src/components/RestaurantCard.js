@@ -4,24 +4,32 @@ import { ClockCircleFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
 const RestaurantCard = ({
-    _id,
-    restaurantName = "Hello World Resto",
-    imageSrc = "https://picsum.photos/id/598/750/400",
+    location_id,
+    name = "Hello World Resto",
     cuisine = [{
         name: 'Thai'
     }],
     price_level = "$$$",
-    is_closed = true
+    is_closed = true,
+    rating = '5.0',
+    photo = {
+        images: {
+            small: {
+                url: 'https://picsum.photos/id/1060/600/310'
+            }
+        },
+        caption: 'Alt text'
+    }
 }) => {
 
     return (
         <Card hoverable style={{ cursor: 'default' }}>
-            <Image src={imageSrc} width="100%" alt="alt" />
+            <Image src={photo.images.small.url} width="100%" alt={photo.caption} height="200px" />
             <Row justify="space-between" style={{ fontWeight: "bold" }}>
-                <Col> {restaurantName} </Col>
+                <Col> {name} </Col>
             </Row>
             <Row style={{ marginTop: "1em" }}>
-                <Rate disabled defaultValue={"5.0"} />
+                <Rate allowHalf disabled defaultValue={rating} />
             </Row>
             <Row style={{ marginTop: "1em", lineHeight: '2em' }} justify="space-between">
                 <Col>
@@ -39,7 +47,7 @@ const RestaurantCard = ({
             <Divider />
             <Row>
                 <Col span={24}>
-                    <Link to={`/detail/${_id}`} >
+                    <Link to={`/detail/${location_id}`} >
                         <Button
                             style={{ width: '100%', letterSpacing: '.15em', backgroundColor: '#285194', color: 'white' }}>
                             LEARN MORE

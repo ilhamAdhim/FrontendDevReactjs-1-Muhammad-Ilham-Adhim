@@ -1,12 +1,14 @@
 import React, { createElement, useState } from 'react';
-import { Comment, Tooltip, Avatar, Rate } from 'antd';
+import { Comment, Tooltip, Avatar, Rate, Typography } from 'antd';
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled } from '@ant-design/icons';
 
 const Reviews = ({
-    reviewer = "Han Solo",
-    content = `We supply a series of design principles`,
-    ratingValue = 4.5
+    author = "Han Solo",
+    title = `We supply a series of design principles`,
+    summary = "",
+    rating = 4.5
 }) => {
+
     const [likes, setLikes] = useState(0);
     const [dislikes, setDislikes] = useState(0);
     const [action, setAction] = useState(null);
@@ -41,16 +43,17 @@ const Reviews = ({
     return (
         <Comment
             actions={actions}
-            author={<a> {reviewer}</a>}
+            author={author}
             avatar={
-                < Avatar
+                <Avatar
                     src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                    alt={`${reviewer}`} />
+                    alt={`${author}`} />
             }
             content={
                 <>
-                    <p> {content} </p>
-                    <Rate allowHalf disabled value={ratingValue} />
+                    <Typography.Text strong> {title} </Typography.Text> <br />
+                    <Typography.Text > {summary} </Typography.Text> <br />
+                    <Rate allowHalf disabled value={rating} />
                 </>
             }
         />

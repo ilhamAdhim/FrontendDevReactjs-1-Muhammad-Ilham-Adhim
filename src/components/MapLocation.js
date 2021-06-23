@@ -2,7 +2,8 @@ import { Spin } from 'antd';
 import React from 'react';
 import { mapOuterStyle, mapStyle } from '../styles';
 
-const MapLocation = ({ latitude = "12.923672", longitude = "100.88237" }) => {
+const MapLocation = ({ latitude, longitude }) => {
+    console.log(latitude, longitude)
     return (
         <div style={mapOuterStyle}>
             <div style={mapStyle}>

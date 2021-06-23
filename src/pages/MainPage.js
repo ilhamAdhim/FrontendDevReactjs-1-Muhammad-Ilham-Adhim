@@ -36,12 +36,22 @@ const MainPage = props => {
         document.title = "Restaurant | Home"
 
         // TODO : Fetch from API
-        /* fetch(`https://travel-advisor.p.rapidapi.com/restaurants/list?location_id=293919&currency=IDR&lunit=km&lang=en_US`)
-            .then(response => {
-                setResponseData(response)
+        fetch("https://travel-advisor.p.rapidapi.com/restaurants/list?location_id=293919&restaurant_tagcategory=10591&restaurant_tagcategory_standalone=10591&currency=IDR&lunit=km&limit=30&lang=en_US", {
+            "method": "GET",
+            "headers": {
+                "x-rapidapi-key": "5f5f6090c6mshe3c64a00c80ba71p1cc3c8jsna5ca7e5362ef",
+                "x-rapidapi-host": "travel-advisor.p.rapidapi.com"
+            }
+        })
+            .then(response => response.json())
+            .then(jsonResponse => {
+                setResponseData(jsonResponse)
                 setIsDataLoaded(true)
             })
-            .catch(err => console.log(err)) */
+            .catch(err => {
+                console.error(err);
+            });
+
     }, []);
 
     // ? Handlers
@@ -96,8 +106,8 @@ const MainPage = props => {
             </Row>
 
             <Divider style={{ color: 'black', padding: 0, margin: 0 }} />
-            {!isDataLoaded ?
-                <RestaurantList data={responseData} />
+            {isDataLoaded ?
+                <RestaurantList responseData={responseData} />
                 : <Row gutter={16} justify="space-around" style={{ marginTop: '10em' }}>
                     <Col><Skeleton active avatar /></Col>
                     <Col><Skeleton active avatar /></Col>

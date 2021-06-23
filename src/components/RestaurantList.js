@@ -4,86 +4,35 @@ import { Link, BrowserRouter as Router } from 'react-router-dom';
 import RestaurantCard from './RestaurantCard';
 
 const RestaurantList = props => {
-    const [filteredProductList, setFilteredProductList] = useState([{
-        _id: 0,
-        restaurantName: 'Penggaris',
-        is_closed: false,
-        cuisine: [{
-            name: 'Thai'
-        }],
-        price_level: '$',
-    },
-    {
-        _id: 1,
-        restaurantName: 'Penggaris Haha',
-        is_closed: false,
-        cuisine: [{
-            name: 'French'
-        }],
-        price_level: '$$',
-    },
-    {
-        _id: 2,
-        restaurantName: 'Penggaris Haha',
-        imageSrc: 'https://picsum.photos/id/1060/600/310',
-        is_closed: true,
-        cuisine: [{
-            name: 'Thai'
-        }],
-        price_level: '$',
-    },
-    {
-        _id: 3,
-        restaurantName: 'Penggaris Haha',
-        imageSrc: 'https://picsum.photos/id/30/600/310',
-        is_closed: true,
-        cuisine: [{
-            name: 'Seafood'
-        }],
-        price_level: '$$$$',
-    },
-    {
-        _id: 4,
-        restaurantName: 'Penggaris Haha',
-        imageSrc: 'https://picsum.photos/id/431/600/310',
-        is_closed: false,
-        cuisine: [{
-            name: 'Japanese'
-        }],
-        price_level: '$',
-    },
-    ]);
 
     //? State to store & manipulate Data
-    const [fetchedDataRestaurant, setFetchedDataRestaurant] = useState(props.data);
     const [displayedData, setDisplayedData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
 
     // ? 
     const [isFiltering, setIsFiltering] = useState(false);
     const [canLoadMore, setCanLoadMore] = useState(false);
-    const [isDataLoaded, setIsDataLoaded] = useState(true);
     const [isLoadingMoreData, setIsLoadingMoreData] = useState(false);
 
     useEffect(() => {
-        setDisplayedData(fetchedDataRestaurant.slice(0, 10))
-
+        console.log(props.responseData.data)
+        setDisplayedData(props.responseData.data.slice(0, 10))
     }, []);
 
     const loadMore = () => {
-        // TODO : Change fetchedDataRestaurant -> props.data later on
-        // if (displayedData.length !== fetchedDataRestaurant.length) {
-        setIsLoadingMoreData(true)
-        // setDisplayedData(() => [...displayedData, fetchedDataRestaurant.slice(displayedData.length, 10)])
-        setFilteredProductList(() => [...filteredProductList, {
-            restaurantName: 'Penggaris Haha',
-            price: 2700,
-            is_closed: true,
-            price_level: '$',
-        },])
-        setIsLoadingMoreData(false)
-        // }
+        // TODO : Change fetchedDataRestaurant -> props.responseData.data later on
+        if (displayedData.length !== props.responseData.data.length) {
+            setIsLoadingMoreData(true)
+            setDisplayedData(() => [...displayedData,
+            ...props.responseData.data.slice(displayedData.length, displayedData.length + 5)])
+
+            setIsLoadingMoreData(false)
+        }
     }
+
+    useEffect(() => {
+        console.log(displayedData)
+    }, [displayedData]);
 
     return (
         <>
@@ -97,7 +46,7 @@ const RestaurantList = props => {
                     lg: 4,
                     column: 4
                 }}
-                dataSource={filteredProductList}
+                dataSource={displayedData}
                 renderItem={(item) => (
                     <List.Item>
                         <RestaurantCard {...item} />
