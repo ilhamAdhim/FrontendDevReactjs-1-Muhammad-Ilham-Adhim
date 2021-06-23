@@ -16,18 +16,19 @@ import { topButtonStyle } from '../styles';
 // ? Utils
 import PriceDropdown from '../utils/PriceDropdown';
 import CategoryDropdown from '../utils/CategoryDropdown';
+import LoadingComponent from '../components/LoadingComponent';
 
 const { Content, Footer } = Layout;
 const MainPage = props => {
 
-    // TODO : Create Context for filters
-    // ...
-
     // ? State Data
     const [responseData, setResponseData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     // ? State Filters
+    const [isFiltering, setIsFiltering] = useState(false);
+
     const [filterIsOpen, setFilterIsOpen] = useState(false);
     const [filterPriceLevel, setFilterPriceLevel] = useState('');
     const [filterCuisine, setFilterCuisine] = useState('');
@@ -46,6 +47,7 @@ const MainPage = props => {
             .then(response => response.json())
             .then(jsonResponse => {
                 setResponseData(jsonResponse)
+                setFilteredData(jsonResponse)
                 setIsDataLoaded(true)
             })
             .catch(err => {
@@ -55,13 +57,46 @@ const MainPage = props => {
     }, []);
 
     // ? Handlers
-    const handleFilterIsOpen = () => { setFilterIsOpen(!filterIsOpen) }
+    const handleFilterIsOpen = () => {
+        setIsFiltering(true)
+        setFilterIsOpen(!filterIsOpen)
+        setFilteredData(() => {
+            return {
+                data: filteredData?.data?.filter((item) => item.is_closed !== filterIsOpen)
+                , ...filteredData
+            }
+        })
+    }
+
+    const handleFilterPriceLevel = () => {
+        setIsFiltering(true)
+        setFilteredData(() => {
+            return {
+                data: filteredData?.data?.filter(item => item.price_range == filterPriceLevel)
+                , ...filteredData
+            }
+        })
+    }
 
     const resetAllFilters = () => {
+        setIsFiltering(false)
         setFilterIsOpen(false)
         setFilterPriceLevel('')
         setFilterCuisine('')
     }
+
+    /*  useEffect(() => {
+ 
+         setFilteredData(() => {
+             let data = handleFilterIsOpen()
+             data = data?.filter(item => item.price_level === filterPriceLevel)
+             return data
+         })
+     }, [filterIsOpen, filterPriceLevel]); */
+
+    useEffect(() => {
+        console.log(filteredData)
+    }, [filteredData]);
 
     return (
         <Content style={{ padding: '0 50px', margin: '16px 0' }}>
@@ -89,11 +124,14 @@ const MainPage = props => {
                         </Col>
                         <Col>
                             <DropdownComponent menu={PriceDropdown} name="Price"
-                                customHandler={(e) => setFilterPriceLevel(e)} />
+                                customHandler={handleFilterPriceLevel} />
                         </Col>
                         <Col>
                             <DropdownComponent menu={CategoryDropdown} name="Category"
-                                customHandler={(e) => setFilterCuisine(e)} />
+                                customHandler={(e) => {
+                                    setIsFiltering(true)
+                                    setFilterCuisine(e)
+                                }} />
                         </Col>
                     </Row>
                 </Col>
@@ -107,12 +145,8 @@ const MainPage = props => {
 
             <Divider style={{ color: 'black', padding: 0, margin: 0 }} />
             {isDataLoaded ?
-                <RestaurantList responseData={responseData} />
-                : <Row gutter={16} justify="space-around" style={{ marginTop: '10em' }}>
-                    <Col><Skeleton active avatar /></Col>
-                    <Col><Skeleton active avatar /></Col>
-                    <Col><Skeleton active avatar /></Col>
-                </Row>
+                <RestaurantList responseData={isFiltering ? filteredData : responseData} />
+                : <LoadingComponent />
             }
 
             <Footer style={{ textAlign: 'center', backgroundColor: 'white', marginTop: '2em' }}>Muhammad Ilham Adhim © Sekawan Media 2021 </Footer>
