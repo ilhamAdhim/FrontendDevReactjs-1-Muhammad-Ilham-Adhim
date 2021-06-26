@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Menu, Dropdown, Button } from 'antd';
-import { DownOutlined, UserOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 
-const DropdownComponent = props => {
+const DropdownFilterComponent = props => {
 
     const handleOnChange = (item) => { props.customHandler(item.value) }
 
@@ -27,4 +27,4 @@ const DropdownComponent = props => {
 };
 
 
-export default DropdownComponent;
+export default DropdownFilterComponent;

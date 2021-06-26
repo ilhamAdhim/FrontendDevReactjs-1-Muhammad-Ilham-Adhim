@@ -1,7 +1,7 @@
 // ? Dependencies
 import React, { useEffect, useState } from 'react';
-import { BackTop, Typography, Row, Divider, Col, Button, Image, Rate, Tooltip, Descriptions, Badge, Skeleton } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
+import { BackTop, Typography, Row, Divider, Col, Button, Image, Rate, Tooltip, Descriptions, Skeleton } from 'antd';
+import { Content, Footer } from 'antd/lib/layout/layout';
 import { useHistory, useParams } from 'react-router-dom';
 
 // ? Components 
@@ -38,7 +38,7 @@ const DetailPage = () => {
             .catch(err => {
                 console.error(err);
             });
-    }, []);
+    }, [id]);
 
     const history = useHistory()
 
@@ -63,8 +63,8 @@ const DetailPage = () => {
                                 <Button icon={<LeftOutlined />} onClick={handleGoBack} />
                             </Tooltip>
                         </Col>
-                        <Col> <Typography.Title level={2} children={responseData?.name || "Restaurant"} /> </Col>
-                        <Col> <Rate disabled value={responseData?.rating || 0} /> </Col>
+                        <Col> <Typography.Title level={3} children={responseData?.name || "Restaurant"} /> </Col>
+                        <Col></Col>
                     </Row>
 
                     {isDataLoaded ?
@@ -75,7 +75,8 @@ const DetailPage = () => {
                     }
 
                     {isDataLoaded ?
-                        <Row justify="space-between">
+                        <Row justify="space-between" gutter={{ xs: 24, sm: 24, md: 8, lg: 8 }}>
+                            <Col> <Typography.Text children={responseData?.ranking || ""} /> </Col>
                             <Col>
                                 <EnvironmentFilled style={{ marginRight: '.5em' }} />
                                 <Typography.Text >
@@ -103,8 +104,12 @@ const DetailPage = () => {
                                 {responseData?.description}
                             </Typography.Text>
                             <br /><br />
-                            <Typography.Text style={{ fontWeight: 'bold', color: 'grey' }}>
+                            <Typography.Text strong style={{ color: 'grey' }}>
                                 Price Range : {"IDR 1,507,000 - IDR 4,333,000"}
+                            </Typography.Text>
+                            <br /><br />
+                            <Typography.Text strong >
+                                Overall Rating <Rate disabled value={responseData?.rating || 0} />
                             </Typography.Text>
                             <Divider />
                             <Descriptions title="More Details on Us!" style={{ marginTop: '1em' }}>
@@ -145,6 +150,7 @@ const DetailPage = () => {
                     }
                 </Col>
             </Row>
+            <Footer style={{ textAlign: 'center', backgroundColor: 'white', marginTop: '2em' }}>Muhammad Ilham Adhim © Sekawan Media 2021 </Footer>
         </Content>
 
     );

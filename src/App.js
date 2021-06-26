@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect,
 } from "react-router-dom";
 
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'

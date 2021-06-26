@@ -1,10 +1,10 @@
 // ? Dependencies
 import React, { useEffect, useState } from 'react';
 import Title from 'antd/lib/typography/Title';
-import { Layout, BackTop, Typography, Row, Divider, Col, Button, Skeleton, List, Card, Checkbox } from 'antd';
+import { Layout, BackTop, Typography, Row, Divider, Col, Button, Checkbox } from 'antd';
 
 // ? Components 
-import DropdownComponent from '../components/DropdownComponent';
+import DropdownFilterComponent from '../components/DropdownFilterComponent';
 import RestaurantList from '../components/RestaurantList';
 
 // ? Icons
@@ -28,9 +28,9 @@ const MainPage = props => {
 
     // ? State Filters
     const [isFiltering, setIsFiltering] = useState(false);
+    const [currentFilter, setCurrentFilter] = useState("");
 
     const [filterIsOpen, setFilterIsOpen] = useState(false);
-    const [filterPriceLevel, setFilterPriceLevel] = useState('');
     const [filterCuisine, setFilterCuisine] = useState('');
 
     useEffect(() => {
@@ -47,7 +47,6 @@ const MainPage = props => {
             .then(response => response.json())
             .then(jsonResponse => {
                 setResponseData(jsonResponse)
-                setFilteredData(jsonResponse)
                 setIsDataLoaded(true)
             })
             .catch(err => {
@@ -59,21 +58,26 @@ const MainPage = props => {
     // ? Handlers
     const handleFilterIsOpen = () => {
         setIsFiltering(true)
-        setFilterIsOpen(!filterIsOpen)
+        setCurrentFilter(!filterIsOpen ? "open" : "closed")
         setFilteredData(() => {
             return {
-                data: filteredData?.data?.filter((item) => item.is_closed !== filterIsOpen)
-                , ...filteredData
+                data: responseData?.data?.filter((item) => {
+                    if ('is_closed' in item)
+                        return item.is_closed === filterIsOpen
+                    return item
+                })
             }
         })
     }
 
-    const handleFilterPriceLevel = () => {
+    const handleFilterPriceLevel = (priceRange) => {
         setIsFiltering(true)
+        setCurrentFilter(priceRange)
         setFilteredData(() => {
             return {
-                data: filteredData?.data?.filter(item => item.price_range == filterPriceLevel)
-                , ...filteredData
+                data: filterIsOpen ?
+                    filteredData?.data?.filter(item => item.price_level === priceRange) :
+                    responseData?.data?.filter(item => item.price_level === priceRange)
             }
         })
     }
@@ -81,18 +85,8 @@ const MainPage = props => {
     const resetAllFilters = () => {
         setIsFiltering(false)
         setFilterIsOpen(false)
-        setFilterPriceLevel('')
         setFilterCuisine('')
     }
-
-    /*  useEffect(() => {
- 
-         setFilteredData(() => {
-             let data = handleFilterIsOpen()
-             data = data?.filter(item => item.price_level === filterPriceLevel)
-             return data
-         })
-     }, [filterIsOpen, filterPriceLevel]); */
 
     useEffect(() => {
         console.log(filteredData)
@@ -103,31 +97,36 @@ const MainPage = props => {
             <BackTop>
                 <UpOutlined style={topButtonStyle} />
             </BackTop>
-            <Row style={{ width: '50%', padding: '1em' }}>
-                <Title level={1} underline> Restaurants </Title>
-                <Typography.Paragraph copyable>
-                    Aliqua excepteur id deserunt labore cupidatat. Ullamco eu adipisicing in id ullamco adipisicing ex in culpa cillum ut. Voluptate adipisicing ea voluptate excepteur ipsum quis Lorem voluptate
-                </Typography.Paragraph>
+            <Row style={{ padding: '1em' }}>
+                <Col sm={24} md={12} lg={12}>
+                    <Title level={1} underline> Restaurants </Title>
+                    <Typography.Paragraph copyable>
+                        Aliqua excepteur id deserunt labore cupidatat. Ullamco eu adipisicing in id ullamco adipisicing ex in culpa cillum ut. Voluptate adipisicing ea voluptate excepteur ipsum quis Lorem voluptate
+                    </Typography.Paragraph>
+                </Col>
             </Row>
             <Divider style={{ color: 'black', padding: 0, margin: 0 }} />
             <Row style={{ padding: '1em 2em' }} justify="space-between">
-                <Col>
-                    <Row gutter={36}>
-                        <Col style={{ marginTop: '.3em' }}>Filter By : </Col>
-                        <Col style={{ marginTop: '.3em' }}>
+                <Col sm={24} md={16}>
+                    <Row justify="start">
+                        <Col sm={12} md={3} style={{ marginTop: '.3em' }}>Filter By : </Col>
+                        <Col sm={12} md={3} style={{ marginTop: '.3em' }}>
                             <Checkbox
                                 checked={filterIsOpen}
-                                onChange={handleFilterIsOpen}
+                                onChange={() => {
+                                    setFilterIsOpen(!filterIsOpen)
+                                    handleFilterIsOpen()
+                                }}
                             >
                                 Open Now
                             </Checkbox>
                         </Col>
-                        <Col>
-                            <DropdownComponent menu={PriceDropdown} name="Price"
-                                customHandler={handleFilterPriceLevel} />
+                        <Col sm={12} md={3}>
+                            <DropdownFilterComponent menu={PriceDropdown} name="Price"
+                                customHandler={(value) => handleFilterPriceLevel(value)} />
                         </Col>
-                        <Col>
-                            <DropdownComponent menu={CategoryDropdown} name="Category"
+                        <Col sm={12} md={3}>
+                            <DropdownFilterComponent menu={CategoryDropdown} name="Category"
                                 customHandler={(e) => {
                                     setIsFiltering(true)
                                     setFilterCuisine(e)
@@ -135,7 +134,7 @@ const MainPage = props => {
                         </Col>
                     </Row>
                 </Col>
-                <Col style={{ marginRight: '4em' }}>
+                <Col sm={24} md={2} style={{ marginRight: '4em' }}>
                     <Button
                         onClick={resetAllFilters}
                         style={{ width: '150%', letterSpacing: '.11em' }}>
@@ -143,6 +142,9 @@ const MainPage = props => {
                 </Col>
             </Row>
 
+            <Typography.Title level={3} style={{ marginLeft: '1em' }}>
+                {isFiltering ? `${filteredData.data.length} restaurants are ${currentFilter}` : 'Restaurant List'}
+            </Typography.Title>
             <Divider style={{ color: 'black', padding: 0, margin: 0 }} />
             {isDataLoaded ?
                 <RestaurantList responseData={isFiltering ? filteredData : responseData} />

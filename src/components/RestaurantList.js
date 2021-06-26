@@ -1,6 +1,5 @@
-import { Button, List, Row, Skeleton } from 'antd';
+import { Button, List, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { Link, BrowserRouter as Router } from 'react-router-dom';
 import RestaurantCard from './RestaurantCard';
 
 const RestaurantList = props => {
@@ -13,9 +12,8 @@ const RestaurantList = props => {
     const [isAllDataLoaded, setIsAllDataLoaded] = useState(false);
 
     useEffect(() => {
-        setDisplayedData(props.responseData.data.slice(0, 10))
-        console.log(props.responseData.data)
-    }, []);
+        setDisplayedData(props.responseData?.data?.slice(0, 10))
+    }, [props.responseData]);
 
     const loadMore = () => {
         if (displayedData.length !== props.responseData.data.length) {
@@ -30,11 +28,15 @@ const RestaurantList = props => {
         console.log(displayedData)
         if (displayedData.length === props.responseData.data.length)
             setIsAllDataLoaded(true)
+        else
+            setIsAllDataLoaded(false)
+
     }, [displayedData]);
 
     return (
         <>
             <List
+                locale={{ emptyText: "No Restaurants" }}
                 style={{ padding: '1em' }}
                 grid={{
                     gutter: 16,
@@ -51,15 +53,16 @@ const RestaurantList = props => {
                     </List.Item>
                 )}
             />
+
             <Row justify="center">
                 <Button type="primary"
                     size="large"
                     onClick={loadMore}
                     disabled={isAllDataLoaded ? true : false}
                     loading={isLoadingMoreData ? true : false}
-                    style={{ width: '10em', letterSpacing: '.12em' }}
+                    style={{ letterSpacing: '.12em' }}
                 >
-                    {isLoadingMoreData ? "Loading" : "LOAD MORE"}
+                    {isAllDataLoaded ? "All Data Loaded" : `LOAD ${props.responseData.data.length - displayedData.length} MORE`}
                 </Button>
             </Row>
         </>

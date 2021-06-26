@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Button, Result, Row } from 'antd';
 import { Link } from 'react-router-dom';
 

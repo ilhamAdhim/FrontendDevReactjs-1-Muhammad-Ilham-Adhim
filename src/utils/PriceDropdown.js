@@ -1,17 +1,11 @@
 const PriceDropdown = [{
     id: 0,
-    value: '$'
+    value: '$$ - $$$'
 }, {
     id: 1,
-    value: '$$'
-}, {
-    id: 2,
-    value: '$$$'
-}, {
-    id: 3,
     value: '$$$$'
 }, {
-    id: 4,
+    id: 2,
     value: '$$$$$'
 }]
 
