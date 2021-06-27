@@ -17,6 +17,7 @@ import { topButtonStyle } from '../styles';
 import PriceDropdown from '../utils/PriceDropdown';
 import CategoryDropdown from '../utils/CategoryDropdown';
 import LoadingComponent from '../components/LoadingComponent';
+import { getData } from '../utils/DataCRUD';
 
 const { Content, Footer } = Layout;
 const MainPage = props => {
@@ -31,20 +32,12 @@ const MainPage = props => {
     const [currentFilter, setCurrentFilter] = useState("");
 
     const [filterIsOpen, setFilterIsOpen] = useState(false);
-    const [filterCuisine, setFilterCuisine] = useState('');
 
     useEffect(() => {
         document.title = "Restaurant | Home"
 
-        // TODO : Fetch from API
-        fetch("https://travel-advisor.p.rapidapi.com/restaurants/list?location_id=293919&restaurant_tagcategory=10591&restaurant_tagcategory_standalone=10591&currency=IDR&lunit=km&limit=30&lang=en_US", {
-            "method": "GET",
-            "headers": {
-                "x-rapidapi-key": "5f5f6090c6mshe3c64a00c80ba71p1cc3c8jsna5ca7e5362ef",
-                "x-rapidapi-host": "travel-advisor.p.rapidapi.com"
-            }
-        })
-            .then(response => response.json())
+        // TODO : Fetch from API LINK : 
+        getData("https://travel-advisor.p.rapidapi.com/restaurants/list?location_id=293919&restaurant_tagcategory=10591&restaurant_tagcategory_standalone=10591&currency=IDR&lunit=km&limit=30&lang=en_US")
             .then(jsonResponse => {
                 setResponseData(jsonResponse)
                 setIsDataLoaded(true)
@@ -72,12 +65,12 @@ const MainPage = props => {
 
     const handleFilterPriceLevel = (priceRange) => {
         setIsFiltering(true)
-        setCurrentFilter(priceRange)
+        setCurrentFilter(priceRange.value)
         setFilteredData(() => {
             return {
                 data: filterIsOpen ?
-                    filteredData?.data?.filter(item => item.price_level === priceRange) :
-                    responseData?.data?.filter(item => item.price_level === priceRange)
+                    filteredData?.data?.filter(item => item.price_level === priceRange.value) :
+                    responseData?.data?.filter(item => item.price_level === priceRange.value)
             }
         })
     }
@@ -85,7 +78,21 @@ const MainPage = props => {
     const resetAllFilters = () => {
         setIsFiltering(false)
         setFilterIsOpen(false)
-        setFilterCuisine('')
+    }
+
+    const fetchByCuisine = (cuisineCategory) => {
+        setIsDataLoaded(false)
+        console.log(cuisineCategory)
+        getData(`https://travel-advisor.p.rapidapi.com/restaurants/list?location_id=293919&currency=IDR&combined_food=${cuisineCategory.id}&lang=en_US`)
+            .then(jsonResponse => {
+                setFilteredData(jsonResponse)
+                setIsDataLoaded(true)
+                setIsFiltering(true)
+                setCurrentFilter(` have ${cuisineCategory.value} cuisine`)
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }
 
     useEffect(() => {
@@ -109,7 +116,7 @@ const MainPage = props => {
             <Row style={{ padding: '1em 2em' }} justify="space-between">
                 <Col sm={24} md={16}>
                     <Row justify="start">
-                        <Col sm={12} md={3} style={{ marginTop: '.3em' }}>Filter By : </Col>
+                        <Col sm={12} md={3} style={{ marginTop: '.3em', marginRight: '2em' }}>Filter By : </Col>
                         <Col sm={12} md={3} style={{ marginTop: '.3em' }}>
                             <Checkbox
                                 checked={filterIsOpen}
@@ -123,21 +130,18 @@ const MainPage = props => {
                         </Col>
                         <Col sm={12} md={3}>
                             <DropdownFilterComponent menu={PriceDropdown} name="Price"
-                                customHandler={(value) => handleFilterPriceLevel(value)} />
+                                customHandler={(priceRange) => handleFilterPriceLevel(priceRange)} />
                         </Col>
                         <Col sm={12} md={3}>
                             <DropdownFilterComponent menu={CategoryDropdown} name="Category"
-                                customHandler={(e) => {
-                                    setIsFiltering(true)
-                                    setFilterCuisine(e)
-                                }} />
+                                customHandler={(cuisineCategory) => fetchByCuisine(cuisineCategory)} />
                         </Col>
                     </Row>
                 </Col>
-                <Col sm={24} md={2} style={{ marginRight: '4em' }}>
+                <Col sm={12} md={4} style={{ marginRight: '4em' }}>
                     <Button
                         onClick={resetAllFilters}
-                        style={{ width: '150%', letterSpacing: '.11em' }}>
+                        style={{ width: '100%', letterSpacing: '.11em' }}>
                         CLEAR ALL</Button>
                 </Col>
             </Row>

@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Menu, Dropdown, Button } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 
 const DropdownFilterComponent = props => {
 
-    const handleOnChange = (item) => { props.customHandler(item.value) }
+    const handleOnChange = (item) => { props.customHandler(item) }
+    useEffect(() => {
 
+        console.log(props.name)
+    }, [props.name]);
     const menu = (
         <Menu>
             {props.menu.map(item => (
