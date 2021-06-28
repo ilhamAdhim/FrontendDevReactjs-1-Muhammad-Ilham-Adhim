@@ -52,5 +52,4 @@ Limitations :
 
 <ul>
     <li> No Login system </li>
-    <li> Filtering is not finished </li>
 </ul>
